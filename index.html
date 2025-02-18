@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Agbalumo&display=swap');
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: "Agbalumo", serif;
+    background:url('./img/download\ \(1\).jpg');
+    background-size: cover;
+background-position:center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.weather-app {
+    
+    background: rgba(255, 255, 255, 0.6); /* Translucent */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    color: #333;
+    text-align: center;
+}
+
+
+
+.weather-container {
+    margin-bottom: 20px;
+    
+}
+
+.city {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+.weather-icon {
+    width: 80px;
+    height: 80px;
+    
+}
+
+.temperature {
+    font-size: 36px;
+    color: #e67e22;
+    margin-bottom: 10px;
+}
+
+.condition {
+    font-size: 18px;
+    color: #3498db;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#city-input {
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+}
+
+#city-input:hover{
+    border-color: #2E8B57;
+  box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
+
+}
+
+.found{
+    color: red;
+    font-size: 20px;
+}
+#greeting,#msg-print {
+ color: olivedrab;
+ position: absolute;
+ top:50px;
+ font-size: 28px;
+ font-weight: 600;
+ text-transform: capitalize;
+
+}
+
+   </style>
+</head>
+<body>
+    <div id="greeting"></div>
+    <div id ="msg-print"></div>
+
+    <div class="weather-app">
+        <div id="weather-result" class="weather-container">
+            
+        </div>
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Enter city name">
+        </div>
+    </div>
+    
+    <script >
+        const cityInp = document.querySelector("#city-input");
+const result = document.querySelector("#weather-result");
+const api_key = `21805bff7224936fa25d6cec016a0a4b`;
+const greeting= document.getElementById("greeting")
+const msg = document.getElementById("msg-print");
+
+cityInp.addEventListener(
+    'keyup',
+    async function (event) {
+        if (event.key == "Enter") {
+            let cityName = event.target.value;
+            if (cityName == "") {
+                cityInp.focus()
+                return
+            }
+            cityInp.disabled = true;
+            const weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}&units=metric`;
+           greeting.disabled
+            cityInp.style.display="none";
+            const responce = await fetch(weatherURL);
+            if (responce.status == 200) {
+                const data = await responce.json()
+                greeting.style.display="none";
+                msg.innerText=`Here's the current weather in ${cityName}: `
+                result.style.padding="40px";
+                result.innerHTML = `
+                <h2 class="city" >${cityName}</h2>
+              <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="">
+            <p class="temperature">${data.main.temp}</p>
+            
+            <p class="condition">${data.weather[0].main}</p>
+                `
+            } else if (responce.status == 404) {
+                result.innerHTML = "<h1 class='found'>City Not Found </h1>"
+            }
+            
+         
+
+        }
+    }
+)
+    
+function getGreeting() {
+  const now = new Date();
+  const hours = now.getHours();
+
+  let greet;
+ let greetText;
+
+  if (hours >= 5 && hours < 12) {
+    greetText="morning";
+    greet = "Good Morning! May your day be as bright as the morning sun. ☀️";
+  } else if (hours >= 12 && hours < 17) {
+    greetText="afternoon";
+    greet = "Good Afternoon! Keep the energy going. You're doing great! 🌤️";
+  } else if (hours >= 17 && hours < 21) {
+    greetText="evening";
+    greet = "Good Evening! Time to unwind and relax. 🌇";
+  } else {
+    greetText="night";
+    greet = "Good Night! Close your eyes and let your dreams guide you. 💤";
+  }
+greeting .textContent = greet;
+if(greetText==="morning"){
+   document.body.style.background="linear-gradient(to right, #FFEE584D, #FFA726)"; /* Sunrise */
+  greeting.style.color= "#1565C0";
+  msg.style.color="#1565C0";
+}else if(greetText==="afternoon") {
+    console.log("hello")
+    document.body.style.background= "linear-gradient(to right, #B3E5FC, #4FC3F7)"; /* Sky blue */
+    greeting.style.color= "#0D47A1";
+    msg.style.color= "#0D47A1";
+}
+else if(greetText==="evening") {
+    document.body.style.background= "linear-gradient(to right, #FF7043, #D84315);"; /* Sunset vibes */
+    greeting.style.color= " #D84315";
+    msg.style.color=" #D84315";
+}
+else{
+    document.body.style.background = "linear-gradient(to right, #1A237E, #FF6F61)";
+    greeting.style.color= "#FFFFFF";
+    msg.style.color="#FFFFFF";
+}
+}
+ getGreeting();
+
+
+
+    </script>
+</body>
+</html>
